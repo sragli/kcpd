@@ -4,7 +4,7 @@
 
 ### Added
 
-- `Kcpd.detect/3` — exact change point detection via kernel-based dynamic programming (DYNP).
+- `KCPD.detect/3` — exact change point detection via kernel-based dynamic programming (DYNP).
 - Built-in kernels: `:rbf` (Radial Basis Function, default), `:linear`, and `:laplacian`.
 - Support for custom 2-arity kernel functions passed as anonymous functions.
 - `:bandwidth` option accepting a numeric value or `:auto` (median pairwise-distance heuristic).

@@ -57,22 +57,22 @@ end
 
 ```elixir
 # Univariate — detect one change point in a step signal
-Kcpd.detect([0, 0, 0, 5, 5, 5], 1)
+KCPD.detect([0, 0, 0, 5, 5, 5], 1)
 #=> [3, 6]
 
 # Two change points
-Kcpd.detect([0.0, 0.0, 1.0, 1.0, 0.0, 0.0], 2)
+KCPD.detect([0.0, 0.0, 1.0, 1.0, 0.0, 0.0], 2)
 #=> [2, 4, 6]
 
 # Multivariate (list of lists)
-Kcpd.detect([[0, 0], [0, 0], [0, 0], [5, 5], [5, 5], [5, 5]], 1)
+KCPD.detect([[0, 0], [0, 0], [0, 0], [5, 5], [5, 5], [5, 5]], 1)
 #=> [3, 6]
 
 # Laplacian kernel with auto bandwidth
-Kcpd.detect(signal, 2, kernel: :laplacian, bandwidth: :auto)
+KCPD.detect(signal, 2, kernel: :laplacian, bandwidth: :auto)
 
 # Custom kernel function
-Kcpd.detect(signal, 1, kernel: fn xi, xj -> :math.exp(-abs(xi - xj)) end)
+KCPD.detect(signal, 1, kernel: fn xi, xj -> :math.exp(-abs(xi - xj)) end)
 ```
 
 The return value is a sorted list of **exclusive end positions** (1-based). A signal of length `n` with `K` change points produces a list of `K + 1` integers; the last element is always `n`.

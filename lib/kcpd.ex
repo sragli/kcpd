@@ -1,4 +1,4 @@
-defmodule Kcpd do
+defmodule KCPD do
   @moduledoc """
   Kernel Change Point Detection (KCPD).
 
@@ -24,10 +24,19 @@ defmodule Kcpd do
 
   ## Quick start
 
-      iex> Kcpd.detect([0, 0, 0, 5, 5, 5], 1)
+      iex> KCPD.detect([0, 0, 0, 5, 5, 5], 1)
       [3, 6]
 
   """
+
+  @typedoc "A single observation — a scalar or a vector of numbers."
+  @type observation :: number() | [number()]
+
+  @typedoc "Kernel identifier or a custom 2-arity kernel function."
+  @type kernel :: :rbf | :linear | :laplacian | (observation(), observation() -> number())
+
+  @typedoc "Bandwidth value, or `:auto` to use the median pairwise-distance heuristic."
+  @type bandwidth :: number() | :auto
 
   @doc """
   Detect `n_bkps` change points in `signal`.
@@ -51,13 +60,14 @@ defmodule Kcpd do
 
   ## Examples
 
-      iex> Kcpd.detect([0, 0, 0, 5, 5, 5], 1)
+      iex> KCPD.detect([0, 0, 0, 5, 5, 5], 1)
       [3, 6]
 
-      iex> Kcpd.detect([0.0, 0.0, 1.0, 1.0, 0.0, 0.0], 2)
+      iex> KCPD.detect([0.0, 0.0, 1.0, 1.0, 0.0, 0.0], 2)
       [2, 4, 6]
 
   """
+  @spec detect([observation()], non_neg_integer(), keyword()) :: [pos_integer()]
   def detect(signal, n_bkps, opts \\ [])
 
   def detect(signal, 0, _opts) when is_list(signal), do: [length(signal)]
