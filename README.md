@@ -4,7 +4,7 @@ An Elixir implementation of the **Kernel Change Point Detection (KCPD)** algorit
 
 ## How it works
 
-KCPD frames change point detection as a **penalised optimal partitioning** problem. Given a signal of length `n` and a desired number of change points `K`, the algorithm finds the partition into `K + 1` segments that minimises the total cost.
+KCPD frames change point detection as a **penalised optimal partitioning** problem [[1]](#references). Given a signal of length `n` and a desired number of change points `K`, the algorithm finds the partition into `K + 1` segments that minimises the total cost.
 
 ### 1. Kernel matrix
 
@@ -12,7 +12,7 @@ A symmetric `n × n` kernel matrix `K` is computed from the signal, where `K[i][
 
 ### 2. Segment cost (MMD-based)
 
-The cost of a segment `S = [a, b)` measures how spread out the observations are *within* that segment. It is derived from the Maximum Mean Discrepancy (MMD):
+The cost of a segment `S = [a, b)` measures how spread out the observations are *within* that segment. It is derived from the Maximum Mean Discrepancy (MMD) [[2]](#references):
 
 ```
 C(a, b) = Σᵢ∈S k(xᵢ, xᵢ) − (1/|S|) Σᵢ∈S Σⱼ∈S k(xᵢ, xⱼ)
@@ -31,7 +31,7 @@ Both structures are computed in O(n²) time and space.
 
 ### 4. Dynamic programming (DYNP)
 
-With O(1) cost queries available, the globally optimal segmentation is found by the classic DYNP recurrence:
+With O(1) cost queries available, the globally optimal segmentation is found by the classic DYNP recurrence [[3]](#references):
 
 ```
 dp[k][t] = min_{s < t} ( dp[k-1][s] + C(s, t) )
@@ -99,7 +99,7 @@ If you only need the change point indices (i.e. where each new segment begins), 
 breakpoints |> List.delete_at(-1)  # => [3]
 ```
 
-This convention matches the [ruptures](https://centre-borelli.github.io/ruptures-docs/) Python library, making it straightforward to cross-validate results between the two implementations.
+This convention matches the [ruptures](https://centre-borelli.github.io/ruptures-docs/) Python library [[4]](#references), making it straightforward to cross-validate results between the two implementations.
 
 ## Options
 
@@ -110,11 +110,11 @@ This convention matches the [ruptures](https://centre-borelli.github.io/ruptures
 
 ## Kernels
 
-| Name          | Formula                              |
-|---------------|--------------------------------------|
-| `:rbf`        | `exp(-‖xᵢ − xⱼ‖² / 2σ²)`           |
-| `:linear`     | `xᵢᵀ xⱼ`                            |
-| `:laplacian`  | `exp(-‖xᵢ − xⱼ‖₁ / σ)`             |
+| Name          | Formula                           |
+|---------------|-----------------------------------|
+| `:rbf`        | `exp(-‖xᵢ − xⱼ‖² / 2σ²)`          |
+| `:linear`     | `xᵢᵀ xⱼ`                          |
+| `:laplacian`  | `exp(-‖xᵢ − xⱼ‖₁ / σ)`            |
 
 ## Complexity
 
@@ -123,3 +123,13 @@ This convention matches the [ruptures](https://centre-borelli.github.io/ruptures
 | Kernel matrix      | O(n²)  | O(n²)  |
 | 2-D prefix sums    | O(n²)  | O(n²)  |
 | DYNP (K segments)  | O(n²K) | O(n²)  |
+
+## References
+
+1. Arlot, S., Celisse, A., & Harchaoui, Z. (2019). A kernel multiple change-point algorithm via model selection. *Journal of Machine Learning Research*, 20(162), 1–56. <https://www.jmlr.org/papers/v20/16-155.html>
+
+2. Gretton, A., Borgwardt, K. M., Rasch, M. J., Schölkopf, B., & Smola, A. (2012). A kernel two-sample test. *Journal of Machine Learning Research*, 13(25), 723–773. <https://www.jmlr.org/papers/v13/gretton12a.html>
+
+3. Jackson, B., Scargle, J. D., Barnes, D., Arabhi, S., Alt, A., Gioumousis, P., Gwin, E., Sangtrakulcharoen, P., Tan, L., & Tsai, T. T. (2005). An algorithm for optimal partitioning of data on an interval. *IEEE Signal Processing Letters*, 12(2), 105–108. <https://doi.org/10.1109/LSP.2001.838216>
+
+4. Truong, C., Oudre, L., & Vayatis, N. (2020). Selective review of offline change point detection methods. *Signal Processing*, 167, 107299. <https://doi.org/10.1016/j.sigpro.2019.107299>
