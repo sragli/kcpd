@@ -75,7 +75,31 @@ KCPD.detect(signal, 2, kernel: :laplacian, bandwidth: :auto)
 KCPD.detect(signal, 1, kernel: fn xi, xj -> :math.exp(-abs(xi - xj)) end)
 ```
 
-The return value is a sorted list of **exclusive end positions** (1-based). A signal of length `n` with `K` change points produces a list of `K + 1` integers; the last element is always `n`.
+### Return value convention
+
+The return value is a sorted list of **exclusive end positions** (1-based).
+
+`detect/3` returns segment **end positions**, not raw change point indices. The result always contains `K + 1` values — one per segment — and the final value is always `length(signal)`.
+
+This convention means the output is **self-contained**: consecutive pairs of values (prepending `0`) fully describe every segment without the caller needing to supply the signal length separately.
+
+```elixir
+breakpoints = KCPD.detect(signal, k)  # e.g. [3, 6]
+
+# Reconstruct segments using 0 as the implicit start:
+[0 | breakpoints]
+|> Enum.chunk_every(2, 1, :discard)
+|> Enum.map(fn [a, b] -> Enum.slice(signal, a, b - a) end)
+# => [[0, 0, 0], [5, 5, 5]]
+```
+
+If you only need the change point indices (i.e. where each new segment begins), drop the last element:
+
+```elixir
+breakpoints |> List.delete_at(-1)  # => [3]
+```
+
+This convention matches the [ruptures](https://centre-borelli.github.io/ruptures-docs/) Python library, making it straightforward to cross-validate results between the two implementations.
 
 ## Options
 
