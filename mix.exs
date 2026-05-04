@@ -9,7 +9,9 @@ defmodule Kcpd.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       source_url: "https://github.com/sragli/kcpd",
-      docs: docs()
+      docs: docs(),
+      description: "Kernel Change Point Detection in Elixir",
+      package: package()
     ]
   end
 
@@ -23,6 +25,14 @@ defmodule Kcpd.MixProject do
     [
       main: "KCPD",
       extras: ["README.md", "LICENSE", "CHANGELOG.md"]
+    ]
+  end
+
+  defp package do
+    [
+      files: ~w(lib .formatter.exs mix.exs README.md LICENSE CHANGELOG.md),
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/sragli/kcpd"}
     ]
   end
 
